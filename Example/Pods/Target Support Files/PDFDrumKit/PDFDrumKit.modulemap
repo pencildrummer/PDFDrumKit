@@ -1,0 +1,6 @@
+framework module PDFDrumKit {
+  umbrella header "PDFDrumKit-umbrella.h"
+
+  export *
+  module * { export * }
+}
