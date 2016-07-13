@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'PDFDrumKit_Example' do
+  pod 'PDFDrumKit', :path => '../'
+
+  target 'PDFDrumKit_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
