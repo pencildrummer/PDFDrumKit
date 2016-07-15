@@ -7,19 +7,18 @@
 //
 
 import Foundation
-//import FeedbackUI
 import UIKit
 
 public protocol PDFDrawableItem: NSObjectProtocol {
     
     var drawBounds: CGRect { get }
-    func drawItem(rect: CGRect)
     
 }
 
 internal protocol PDFDrawableItemInternal: class, NSObjectProtocol {
     
     var _drawRect: CGRect { get }
+    func drawItem(context: CGContextRef)
     
 }
 
@@ -27,14 +26,26 @@ public class PDFItem: UIView, PDFDrawableItem, PDFDrawableItemInternal {
     
     internal var _drawRect: CGRect = CGRectZero
     
+    public override init(frame: CGRect) {
+        super.init(frame: frame)
+        backgroundColor = UIColor.whiteColor()
+    }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+    
     public var drawBounds: CGRect {
         setNeedsLayout()
         layoutIfNeeded()
         return bounds
     }
     
-    public func drawItem(rect: CGRect) {
-        frame = rect
+    internal func drawItem(context: CGContextRef) {
+        layer.drawInContext(context)
+    }
+    
+    public override func drawRect(rect: CGRect) {
         drawViewHierarchyInRect(rect, afterScreenUpdates: true)
     }
     
@@ -65,13 +76,11 @@ public class PDFBuilder {
     public private(set) var pdfPath: String!
     
     private var drawableItems: [PDFItem] = []
-    private var drawableItemsRects: [CGRect] = []
 
     public init() {}
     
     public func appendItem(item: PDFItem) {
         drawableItems.append(item)
-        //drawableItems.indexOf({ $0 as? PDFItem == item })drawableItems.append(item as! protocol<PDFDrawableItem, PDFDrawableItemInternal>)
     }
     
     private func sizeForPageSize(pageSize: PDFPageSize) -> CGSize {
@@ -124,26 +133,27 @@ public class PDFBuilder {
             return CGRect(origin: CGPoint(x: CGRectGetMinX(contentRect), y: CGRectGetMaxY(contentRect) - CGRectGetHeight(itemBounds)),
                           size: itemBounds.size)
         } else if let itemIndex = drawableItems.indexOf({ $0 as? PDFItem == item }) {
-            return drawableItemsRects[itemIndex]
+            return item.frame
         }
         
         return CGRectZero
     }
     
-    private func calculateRectForItems(inPage pageSize: PDFPageSize) {
+    private func calculateFrameForItems(inPage pageSize: PDFPageSize) {
         var contentRect = contentRectForPageSize(pageSize)
         var lastOrigin = contentRect.origin
-        for (index, item) in drawableItems.enumerate() {
-            
+        drawableItems = drawableItems.map { item in
             var availableSize = UILayoutFittingCompressedSize
             availableSize.width = CGRectGetWidth(contentRect)
             
             let size = item.systemLayoutSizeFittingSize(availableSize, withHorizontalFittingPriority: UILayoutPriorityRequired, verticalFittingPriority: UILayoutPriorityDefaultLow)
             let drawableItemRect = CGRect(origin: lastOrigin, size: size)
             
-            drawableItemsRects.append(drawableItemRect)
+            item.frame = drawableItemRect
             
             lastOrigin.y = lastOrigin.y + CGRectGetHeight(item.drawBounds)
+            
+            return item
         }
     }
     
@@ -167,7 +177,7 @@ public class PDFBuilder {
         
         let pageSize = defaultPageSize
         
-        calculateRectForItems(inPage: pageSize)
+        calculateFrameForItems(inPage: pageSize)
         
         UIGraphicsBeginPDFContextToFile(tmpPath, CGRectZero, nil)
         
@@ -177,15 +187,14 @@ public class PDFBuilder {
         // If there is a page header draw it
         if let pageHeader = pageHeader {
             // Set the drawRect on the item
-            pageHeader._drawRect = drawRectForItem(pageHeader, inPage: pageSize)
+            pageHeader.frame = drawRectForItem(pageHeader, inPage: pageSize)
             // Performs the drawing
             performDrawItem(pageHeader)
         }
         
         for item in drawableItems {
-            
             // Set the drawRect on the item
-            item._drawRect = drawRectForItem(item, inPage: pageSize)
+            item.frame = drawRectForItem(item, inPage: pageSize)
             // Performs the drawing
             performDrawItem(item)
         }
@@ -193,7 +202,7 @@ public class PDFBuilder {
         // If there is a page footer draw it
         if let pageFooter = pageFooter {
             // Set the drawRect on the item
-            pageFooter._drawRect = drawRectForItem(pageFooter, inPage: pageSize)
+            pageFooter.frame = drawRectForItem(pageFooter, inPage: pageSize)
             // Performs the drawing
             performDrawItem(pageFooter)
         }
@@ -203,19 +212,19 @@ public class PDFBuilder {
     }
     
     private func performDrawItem(item: PDFItem) {
-        let context = UIGraphicsGetCurrentContext()
         
-        CGContextSaveGState(context)
-        
-        var drawBounds: CGRect = CGRectZero
-        
-        CGContextTranslateCTM(context, item._drawRect.origin.x, item._drawRect.origin.y)
-        drawBounds = item._drawRect
-        drawBounds.origin = CGPointZero
-        
-        item.drawItem(drawBounds)
-        
-        CGContextRestoreGState(context)
+        if let context = UIGraphicsGetCurrentContext() {
+         
+            CGContextSaveGState(context)
+            
+            CGContextTranslateCTM(context, item.frame.origin.x, item.frame.origin.y)
+            CGContextClipToRect(context, item.bounds)
+            
+            item.drawItem(context)
+            
+            CGContextRestoreGState(context)
+            
+        }
         
     }
     

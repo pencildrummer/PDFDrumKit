@@ -14,8 +14,4 @@ public class PDFFooter: PDFItem {
         return CGRect(x: 0, y: 0, width: 0, height: 40)
     }
     
-    public override func drawItem(rect: CGRect) {
-        
-    }
-    
 }
