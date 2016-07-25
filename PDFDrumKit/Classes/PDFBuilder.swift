@@ -9,48 +9,6 @@
 import Foundation
 import UIKit
 
-public protocol PDFDrawableItem: NSObjectProtocol {
-    
-    var drawBounds: CGRect { get }
-    
-}
-
-internal protocol PDFDrawableItemInternal: class, NSObjectProtocol {
-    
-    var _drawRect: CGRect { get }
-    func drawItem(context: CGContextRef)
-    
-}
-
-public class PDFItem: UIView, PDFDrawableItem, PDFDrawableItemInternal {
-    
-    internal var _drawRect: CGRect = CGRectZero
-    
-    public override init(frame: CGRect) {
-        super.init(frame: frame)
-        backgroundColor = UIColor.whiteColor()
-    }
-    
-    required public init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
-    
-    public var drawBounds: CGRect {
-        setNeedsLayout()
-        layoutIfNeeded()
-        return bounds
-    }
-    
-    internal func drawItem(context: CGContextRef) {
-        layer.drawInContext(context)
-    }
-    
-    public override func drawRect(rect: CGRect) {
-        drawViewHierarchyInRect(rect, afterScreenUpdates: true)
-    }
-    
-}
-
 /**
  Sources:
  - https://www.cl.cam.ac.uk/~mgk25/iso-paper-ps.txt
@@ -68,7 +26,7 @@ public enum PDFPageSize {
 public class PDFBuilder {
     
     public var defaultPageSize: PDFPageSize = .A4
-    public var pageMargin: UIEdgeInsets = UIEdgeInsetsZero
+    public var pageMargin: UIEdgeInsets = UIEdgeInsets(top: 40, left: 50, bottom: 40, right: 50)
     
     public var pageHeader: PDFItem?
     public var pageFooter: PDFItem?
@@ -220,7 +178,7 @@ public class PDFBuilder {
             CGContextTranslateCTM(context, item.frame.origin.x, item.frame.origin.y)
             CGContextClipToRect(context, item.bounds)
             
-            item.drawItem(context)
+            item.layer.drawInContext(context)
             
             CGContextRestoreGState(context)
             
