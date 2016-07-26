@@ -102,20 +102,22 @@ public class PDFBuilder {
         var lastOrigin = contentRect.origin
         drawableItems = drawableItems.map { item in
             var availableSize = UILayoutFittingCompressedSize
-            availableSize.width = CGRectGetWidth(contentRect)
+            availableSize.width = CGRectGetWidth(contentRect) - item.layoutMargins.left - item.layoutMargins.right
             
             let size = item.systemLayoutSizeFittingSize(availableSize, withHorizontalFittingPriority: UILayoutPriorityRequired, verticalFittingPriority: UILayoutPriorityDefaultLow)
-            let drawableItemRect = CGRect(origin: lastOrigin, size: size)
+            var drawableItemRect = CGRect(origin: lastOrigin, size: size)
+            
+            drawableItemRect.origin.y = drawableItemRect.origin.y + item.layoutMargins.top
             
             item.frame = drawableItemRect
             
-            lastOrigin.y = lastOrigin.y + CGRectGetHeight(item.drawBounds)
+            lastOrigin.y = lastOrigin.y + CGRectGetHeight(item.drawBounds) + item.layoutMargins.top + item.layoutMargins.bottom
             
             return item
         }
     }
     
-    private func normalizeBoundsForItem(item: PDFDrawableItem, inPage pageSize: PDFPageSize) -> CGRect {
+    private func normalizeBoundsForItem(item: PDFItem, inPage pageSize: PDFPageSize) -> CGRect {
         let pageRect = pageRectForPageSize(pageSize)
         var bounds = item.drawBounds
         if bounds.size.width == 0 {

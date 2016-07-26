@@ -27,10 +27,12 @@ public class PDFItem: UIView, PDFDrawableItem, PDFDrawableItemInternal {
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
+        layoutMargins = UIEdgeInsetsZero
     }
     
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+        layoutMargins = UIEdgeInsetsZero
     }
     
     public var drawBounds: CGRect {
@@ -48,20 +50,32 @@ public class PDFItem: UIView, PDFDrawableItem, PDFDrawableItemInternal {
         if let sublayers = layer.sublayers {
             for sublayer in sublayers {
                 CGContextSaveGState(ctx)
-                sublayer.setNeedsLayout()
-                sublayer.layoutIfNeeded()
+
                 CGContextTranslateCTM(ctx, sublayer.frame.origin.x, sublayer.frame.origin.y)
                 CGContextClipToRect(ctx, sublayer.bounds)
+                
+                sublayer.allowsEdgeAntialiasing = false
+
                 sublayer.drawInContext(ctx)
+                
+                var shouldRender = sublayer.sublayers?.count ?? 0 == 0
+                if let _ = sublayer.delegate as? UILabel {
+                    shouldRender = false
+                }
+                if shouldRender {
+                    sublayer.renderInContext(ctx)
+                }
+                
                 drawLayerHierarchy(sublayer, ctx: ctx)
+                
                 CGContextRestoreGState(ctx)
             }
         }
     }
     
-//    public override func drawRect(rect: CGRect) {
-//        
-//    }
+    public override func drawRect(rect: CGRect) {
+        super.drawRect(rect)
+    }
     
     public func drawVectorImage(path: String, inBundle bundle: NSBundle? = nil, atPoint point: CGPoint, context: CGContextRef) {
         var loadBundle = bundle
@@ -80,5 +94,18 @@ public class PDFItem: UIView, PDFDrawableItem, PDFDrawableItemInternal {
             CGContextDrawPDFPage(context, pdfLogoPage)
             CGContextRestoreGState(context)
         }
+    }
+}
+
+extension CALayer {
+    
+    private func debugLog() -> Self {
+        print("---")
+        print("Layer draw info")
+        debugPrint(self.dynamicType, "delegate:", delegate)
+        let ctx = UIGraphicsGetCurrentContext()
+        print("frame:", frame, "bounds: ", bounds, "clip box:", CGContextGetClipBoundingBox(ctx))
+        print("background color:", backgroundColor)
+        return self
     }
 }
