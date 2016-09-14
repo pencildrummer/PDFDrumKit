@@ -100,7 +100,7 @@ public class PDFBuilder {
     }
     
     private func calculateFrameForItems(inPage pageSize: PDFPageSize) {
-        var contentRect = contentRectForPageSize(pageSize)
+        let contentRect = contentRectForPageSize(pageSize)
         var lastOrigin = contentRect.origin
         drawableItems = drawableItems.map { item in
             var availableSize = UILayoutFittingCompressedSize

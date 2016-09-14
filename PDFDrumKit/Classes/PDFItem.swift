@@ -85,14 +85,15 @@ public class PDFItem: UIView, PDFDrawableItem, PDFDrawableItemInternal {
         if let feedbackLogoPath = loadBundle!.pathForResource(path, ofType: "pdf") {
             let feedbackLogoURL = NSURL(fileURLWithPath: feedbackLogoPath)
             let pdfLogo = CGPDFDocumentCreateWithURL(feedbackLogoURL)
-            let pdfLogoPage = CGPDFDocumentGetPage(pdfLogo!, 1)
-            let imageRect = CGPDFPageGetBoxRect(pdfLogoPage, .MediaBox)
-            CGContextSaveGState(context)
-            CGContextTranslateCTM(context, 0, imageRect.size.height)
-            CGContextTranslateCTM(context, point.x, point.y)
-            CGContextScaleCTM(context, 1, -1)
-            CGContextDrawPDFPage(context, pdfLogoPage)
-            CGContextRestoreGState(context)
+            if let pdfLogoPage = CGPDFDocumentGetPage(pdfLogo!, 1) {
+                let imageRect = CGPDFPageGetBoxRect(pdfLogoPage, .MediaBox)
+                CGContextSaveGState(context)
+                CGContextTranslateCTM(context, 0, imageRect.size.height)
+                CGContextTranslateCTM(context, point.x, point.y)
+                CGContextScaleCTM(context, 1, -1)
+                CGContextDrawPDFPage(context, pdfLogoPage)
+                CGContextRestoreGState(context)
+            }
         }
     }
 }
@@ -103,9 +104,10 @@ extension CALayer {
         print("---")
         print("Layer draw info")
         debugPrint(self.dynamicType, "delegate:", delegate)
-        let ctx = UIGraphicsGetCurrentContext()
-        print("frame:", frame, "bounds: ", bounds, "clip box:", CGContextGetClipBoundingBox(ctx))
-        print("background color:", backgroundColor)
+        if let ctx = UIGraphicsGetCurrentContext() {
+            print("frame:", frame, "bounds: ", bounds, "clip box:", CGContextGetClipBoundingBox(ctx))
+            print("background color:", backgroundColor)
+        }
         return self
     }
 }
