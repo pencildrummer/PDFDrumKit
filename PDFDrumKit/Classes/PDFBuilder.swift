@@ -25,6 +25,8 @@ public enum PDFPageSize {
 
 public class PDFBuilder {
     
+    public var filename: String?
+    
     public var defaultPageSize: PDFPageSize = .A4
     public var pageMargin: UIEdgeInsets = UIEdgeInsets(top: 40, left: 50, bottom: 40, right: 50)
     
@@ -130,7 +132,13 @@ public class PDFBuilder {
     
     public func drawPDF() {
         
-        let pdfFileName = String("PDFBuilder_\(NSProcessInfo.processInfo().globallyUniqueString).pdf")
+        var pdfFileName: String
+        if filename?.isEmpty ?? true {
+            pdfFileName = String("PDFBuilder_\(NSProcessInfo.processInfo().globallyUniqueString).pdf")
+        } else {
+            pdfFileName = filename!
+        }
+        
         let tmpPath = NSTemporaryDirectory() + "/" + pdfFileName
         
         pdfPath = tmpPath
