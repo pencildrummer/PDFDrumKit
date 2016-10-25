@@ -139,7 +139,11 @@ public class PDFBuilder {
             pdfFileName = filename!
         }
         
-        let tmpPath = NSTemporaryDirectory() + "/" + pdfFileName
+        // Sanitize the pdf filename
+        
+        pdfFileName = pdfFileName.sanitizedPDFFilenameString
+        
+        let tmpPath = NSString(string: NSTemporaryDirectory()).stringByAppendingPathComponent(pdfFileName) as! String
         
         pdfPath = tmpPath
         
@@ -194,6 +198,23 @@ public class PDFBuilder {
             
         }
         
+    }
+    
+}
+
+extension String {
+    
+    internal var sanitizedPDFFilenameString: String {
+        var sanitized = self
+        // Check for illegal characters
+        sanitized = sanitized.stringByReplacingOccurrencesOfString("/", withString: "-")
+        // Escape spaces in filename
+        //sanitized = sanitized.stringByReplacingOccurrencesOfString(" ", withString: "_")
+        // Check if has pdf extension
+        if NSString(string: sanitized).pathExtension != "pdf" {
+            sanitized += ".pdf"
+        }
+        return sanitized
     }
     
 }
