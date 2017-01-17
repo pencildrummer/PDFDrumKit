@@ -73,7 +73,10 @@ public class PDFItem: UIView, PDFDrawableItem, PDFDrawableItemInternal {
         }
     }
     
-    public override func drawRect(rect: CGRect) {
+    // -drawRect has been marked final to avoid override
+    // The draw code must be perfomed inside the -drawLayer(layer:, inContext:)
+    
+    final public override func drawRect(rect: CGRect) {
         super.drawRect(rect)
     }
     
@@ -95,6 +98,12 @@ public class PDFItem: UIView, PDFDrawableItem, PDFDrawableItemInternal {
                 CGContextRestoreGState(context)
             }
         }
+    }
+    
+    public func addLinkInRect(URL: NSURL, linkRect: CGRect, context: CGContextRef) {        
+        let ctm = CGContextGetCTM(context)
+        let normalizedRect = CGRectApplyAffineTransform(linkRect, ctm)
+        UIGraphicsSetPDFContextURLForRect(URL, normalizedRect)
     }
 }
 

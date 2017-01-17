@@ -26,6 +26,8 @@ public enum PDFPageSize {
 public class PDFBuilder {
     
     public var filename: String?
+    public var title: String?
+    public var author: String?
     
     public var defaultPageSize: PDFPageSize = .A4
     public var pageMargin: UIEdgeInsets = UIEdgeInsets(top: 40, left: 50, bottom: 40, right: 50)
@@ -34,7 +36,8 @@ public class PDFBuilder {
     public var pageFooter: PDFItem?
     
     public private(set) var pdfPath: String!
-    
+
+    private var _filename: String!
     private var drawableItems: [PDFItem] = []
 
     public init() {}
@@ -132,18 +135,17 @@ public class PDFBuilder {
     
     public func drawPDF() {
         
-        var pdfFileName: String
-        if filename?.isEmpty ?? true {
-            pdfFileName = String("PDFBuilder_\(NSProcessInfo.processInfo().globallyUniqueString).pdf")
+        if let filename = filename {
+            _filename = filename
         } else {
-            pdfFileName = filename!
+            _filename = String("PDFBuilder_\(NSProcessInfo.processInfo().globallyUniqueString).pdf")
         }
         
         // Sanitize the pdf filename
         
-        pdfFileName = pdfFileName.sanitizedPDFFilenameString
+        _filename = _filename.sanitizedPDFFilenameString
         
-        let tmpPath = NSString(string: NSTemporaryDirectory()).stringByAppendingPathComponent(pdfFileName) as! String
+        let tmpPath = NSString(string: NSTemporaryDirectory()).stringByAppendingPathComponent(_filename) as! String
         
         pdfPath = tmpPath
         
@@ -151,7 +153,7 @@ public class PDFBuilder {
         
         calculateFrameForItems(inPage: pageSize)
         
-        UIGraphicsBeginPDFContextToFile(tmpPath, CGRectZero, nil)
+        UIGraphicsBeginPDFContextToFile(tmpPath, CGRectZero, pdfMetadata)
         
         let sheetRect = CGRect(origin: CGPointZero, size: sizeForPageSize(pageSize))
         UIGraphicsBeginPDFPageWithInfo(sheetRect, nil)
@@ -186,18 +188,33 @@ public class PDFBuilder {
     private func performDrawItem(item: PDFItem) {
         
         if let context = UIGraphicsGetCurrentContext() {
-         
+ 
             CGContextSaveGState(context)
             
             CGContextTranslateCTM(context, item.frame.origin.x, item.frame.origin.y)
             CGContextClipToRect(context, item.bounds)
             
             item.layer.drawInContext(context)
-            
+
             CGContextRestoreGState(context)
             
         }
         
+    }
+    
+    private var pdfMetadata: [String: AnyObject] {
+        var metadata: [String: AnyObject] = [
+            kCGPDFContextCreator as String : "PDFDrumKit v.0.1.3 - Fabio Borella - github.com/pencildrummer"
+        ]
+        if let title = title {
+            metadata[kCGPDFContextTitle as String] = title
+        } else if let _filename = _filename {
+            metadata[kCGPDFContextTitle as String] = NSString(string: _filename).stringByDeletingPathExtension
+        }
+        if let author = author {
+            metadata[kCGPDFContextAuthor as String] = author
+        }
+        return metadata
     }
     
 }
