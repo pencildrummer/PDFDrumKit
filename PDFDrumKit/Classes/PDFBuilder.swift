@@ -204,7 +204,7 @@ public class PDFBuilder {
     
     private var pdfMetadata: [String: AnyObject] {
         var metadata: [String: AnyObject] = [
-            kCGPDFContextCreator as String : "PDFDrumKit v.0.1.3 - Fabio Borella - github.com/pencildrummer"
+            kCGPDFContextCreator as String : "PDFDrumKit v.0.1.4 - Fabio Borella - github.com/pencildrummer"
         ]
         if let title = title {
             metadata[kCGPDFContextTitle as String] = title
