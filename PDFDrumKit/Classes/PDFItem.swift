@@ -9,21 +9,7 @@
 
 import Foundation
 
-public protocol PDFDrawableItem: NSObjectProtocol {
-    
-    var drawBounds: CGRect { get }
-    
-}
-
-internal protocol PDFDrawableItemInternal: class, NSObjectProtocol {
-    
-    var _drawRect: CGRect { get }
-    
-}
-
-public class PDFItem: UIView, PDFDrawableItem, PDFDrawableItemInternal {
-    
-    internal var _drawRect: CGRect = CGRectZero
+public class PDFItem: UIView, PDFDrawableItem {
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
@@ -100,11 +86,6 @@ public class PDFItem: UIView, PDFDrawableItem, PDFDrawableItemInternal {
         }
     }
     
-    public func addLinkInRect(URL: NSURL, linkRect: CGRect, context: CGContextRef) {        
-        let ctm = CGContextGetCTM(context)
-        let normalizedRect = CGRectApplyAffineTransform(linkRect, ctm)
-        UIGraphicsSetPDFContextURLForRect(URL, normalizedRect)
-    }
 }
 
 extension CALayer {
