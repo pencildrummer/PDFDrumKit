@@ -69,44 +69,24 @@ public class PDFItem: UIView, PDFDrawableItem {
     }
     
     public func drawVectorImage(path: String, inBundle bundle: NSBundle? = nil, atPoint point: CGPoint, context: CGContextRef) {
-        var loadBundle = bundle
-        if loadBundle == nil {
-            loadBundle = NSBundle.mainBundle()
-        }
-        if let feedbackLogoPath = loadBundle!.pathForResource(path, ofType: "pdf") {
-            let feedbackLogoURL = NSURL(fileURLWithPath: feedbackLogoPath)
-            let pdfLogo = CGPDFDocumentCreateWithURL(feedbackLogoURL)
-            if let pdfLogoPage = CGPDFDocumentGetPage(pdfLogo!, 1) {
-                let imageRect = CGPDFPageGetBoxRect(pdfLogoPage, .MediaBox)
+        let loadBundle = bundle ?? NSBundle.mainBundle()
+        if let pdfImagePath = loadBundle.pathForResource(path, ofType: "pdf") {
+            let pdfImageURL = NSURL(fileURLWithPath: pdfImagePath)
+            if let pdfImageDocument = CGPDFDocumentCreateWithURL(pdfImageURL),
+                let pdfImagePage = CGPDFDocumentGetPage(pdfImageDocument, 1) {
+                
+                let imageRect = CGPDFPageGetBoxRect(pdfImagePage, .MediaBox)
+                
                 CGContextSaveGState(context)
                 CGContextTranslateCTM(context, 0, imageRect.size.height)
                 CGContextTranslateCTM(context, point.x, point.y)
                 CGContextScaleCTM(context, 1, -1)
-                CGContextDrawPDFPage(context, pdfLogoPage)
+                CGContextDrawPDFPage(context, pdfImagePage)
                 CGContextRestoreGState(context)
+                
             }
         }
     }
-    
-    // MARK: Rect
-    
-    /*internal var drawableFrame: CGRect {
-        let contentRect = pageRectForPageSize(pageSize)
-        let contentRect = _page?.pageDrawableRect
-        let itemBounds = normalizeBoundsForItem(item, inPage: pageSize)
-        
-        if item == pageHeader {
-            return CGRect(origin: contentRect.origin,
-                          size: itemBounds.size)
-        } else if item == pageFooter {
-            return CGRect(origin: CGPoint(x: CGRectGetMinX(contentRect), y: CGRectGetMaxY(contentRect) - CGRectGetHeight(itemBounds)),
-                          size: itemBounds.size)
-        } else if let itemIndex = drawableItems.indexOf({ $0 as? PDFItem == item }) {
-            return item.frame
-        }
-        
-        return CGRectZero
-    }*/
     
 }
 

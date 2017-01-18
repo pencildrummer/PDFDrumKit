@@ -49,25 +49,6 @@ public class PDFPage {
         return pageContentDrawableRect
     }
     
-//    private func drawRectForItem(item: PDFItem, inPage pageSize: PDFPageSize) -> CGRect {
-//        
-//        let contentRect = pageRectForPageSize(pageSize)
-//        
-//        let itemBounds = normalizeBoundsForItem(item, inPage: pageSize)
-//        
-//        if item == pageHeader {
-//            return CGRect(origin: contentRect.origin,
-//                          size: itemBounds.size)
-//        } else if item == pageFooter {
-//            return CGRect(origin: CGPoint(x: CGRectGetMinX(contentRect), y: CGRectGetMaxY(contentRect) - CGRectGetHeight(itemBounds)),
-//                          size: itemBounds.size)
-//        } else if let itemIndex = drawableItems.indexOf({ $0 as? PDFItem == item }) {
-//            return item.frame
-//        }
-//        
-//        return CGRectZero
-//    }
-    
     private func calculateFrameForItems() {
         let contentRect = pageContentDrawableRect
         var lastOrigin = contentRect.origin
