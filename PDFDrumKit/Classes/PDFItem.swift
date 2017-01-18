@@ -11,6 +11,8 @@ import Foundation
 
 public class PDFItem: UIView, PDFDrawableItem {
     
+    internal var _page: PDFPage?
+    
     public override init(frame: CGRect) {
         super.init(frame: frame)
         layoutMargins = UIEdgeInsetsZero
@@ -85,6 +87,26 @@ public class PDFItem: UIView, PDFDrawableItem {
             }
         }
     }
+    
+    // MARK: Rect
+    
+    /*internal var drawableFrame: CGRect {
+        let contentRect = pageRectForPageSize(pageSize)
+        let contentRect = _page?.pageDrawableRect
+        let itemBounds = normalizeBoundsForItem(item, inPage: pageSize)
+        
+        if item == pageHeader {
+            return CGRect(origin: contentRect.origin,
+                          size: itemBounds.size)
+        } else if item == pageFooter {
+            return CGRect(origin: CGPoint(x: CGRectGetMinX(contentRect), y: CGRectGetMaxY(contentRect) - CGRectGetHeight(itemBounds)),
+                          size: itemBounds.size)
+        } else if let itemIndex = drawableItems.indexOf({ $0 as? PDFItem == item }) {
+            return item.frame
+        }
+        
+        return CGRectZero
+    }*/
     
 }
 

@@ -11,8 +11,15 @@ import UIKit
 
 public protocol PDFDrawableItem: NSObjectProtocol {
     
+    var frame: CGRect { get set }
+    var bounds: CGRect { get set }
+    var layer: CALayer { get }
+    var layoutMargins: UIEdgeInsets { get set }
+    
     var drawBounds: CGRect { get }
     
+    @available(iOS 8.0, *)
+    func systemLayoutSizeFittingSize(targetSize: CGSize, withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority, verticalFittingPriority: UILayoutPriority) -> CGSize
 }
 
 extension PDFDrawableItem {
@@ -37,6 +44,25 @@ extension PDFDrawableItem {
         let ctm = CGContextGetCTM(context)
         let normalizedRect = CGRectApplyAffineTransform(linkRect, ctm)
         UIGraphicsSetPDFContextDestinationForRect(destination, linkRect)
+    }
+    
+    // MARK: Draw
+    
+    internal func draw() {
+        
+        if let context = UIGraphicsGetCurrentContext() {
+            
+            CGContextSaveGState(context)
+            
+            CGContextTranslateCTM(context, frame.origin.x, frame.origin.y)
+            CGContextClipToRect(context, bounds)
+            
+            layer.drawInContext(context)
+            
+            CGContextRestoreGState(context)
+            
+        }
+        
     }
     
 }
