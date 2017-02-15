@@ -83,8 +83,12 @@ public class PDFDocument {
         // Perform draw pages
         
         for page in pages {
-            page._pageHeader = pagesHeader
-            page._pageFooter = pagesFooter
+            if page.pageHeader == nil {
+                page.pageHeader = pagesHeader
+            }
+            if page.pageFooter == nil {
+                page.pageFooter = pagesFooter
+            }
             page.draw()
         }
         

@@ -14,8 +14,8 @@ public class PDFPage {
     public var pageSize: PDFPageSize?
     public var margins: UIEdgeInsets?
     
-    internal var _pageHeader: PDFHeader?
-    internal var _pageFooter: PDFFooter?
+    public var pageHeader: PDFHeader?
+    public var pageFooter: PDFFooter?
     
     public private(set) var items: [PDFDrawableItem] = []
     
@@ -39,11 +39,11 @@ public class PDFPage {
     
     internal var pageContentDrawableRect: CGRect {
         var pageContentDrawableRect = pageDrawableRect
-        if let pageHeader = _pageHeader {
+        if let pageHeader = pageHeader {
             pageContentDrawableRect.origin.y += CGRectGetHeight(pageHeader.drawBounds)
             pageContentDrawableRect.size.height -= CGRectGetHeight(pageHeader.drawBounds)
         }
-        if let pageFooter = _pageFooter {
+        if let pageFooter = pageFooter {
             pageContentDrawableRect.size.height -= CGRectGetHeight(pageFooter.drawBounds)
         }
         return pageContentDrawableRect
@@ -94,7 +94,7 @@ public class PDFPage {
         UIGraphicsBeginPDFPageWithInfo(pageSize.bounds, nil)
         
         // If there is a page header draw it
-        if let pageHeader = _pageHeader {
+        if let pageHeader = pageHeader {
             // Set the drawRect on the item
             let itemBounds = normalizedBoundsForItem(pageHeader)
             pageHeader.frame = CGRect(origin: pageDrawableRect.origin,
@@ -111,7 +111,7 @@ public class PDFPage {
         }
         
         // If there is a page footer draw it
-        if let pageFooter = _pageFooter {
+        if let pageFooter = pageFooter {
             // Set the drawRect on the item
             let itemBounds = normalizedBoundsForItem(pageFooter)
             let pageContentDrawableRect = self.pageContentDrawableRect
