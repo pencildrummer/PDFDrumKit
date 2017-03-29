@@ -34,7 +34,7 @@ open class PDFItem: UIView, PDFDrawableItem {
         drawLayerHierarchy(layer, ctx: ctx)
     }
     
-    fileprivate func drawLayerHierarchy(_ layer: CALayer, ctx: CGContextRef) {
+    fileprivate func drawLayerHierarchy(_ layer: CALayer, ctx: CGContext) {
         if let sublayers = layer.sublayers {
             for sublayer in sublayers {
                 ctx.saveGState()
@@ -68,11 +68,11 @@ open class PDFItem: UIView, PDFDrawableItem {
         super.draw(rect)
     }
     
-    open func drawVectorImage(_ path: String, inBundle bundle: Bundle? = nil, atPoint point: CGPoint, context: CGContextRef) {
+    open func drawVectorImage(_ path: String, inBundle bundle: Bundle? = nil, atPoint point: CGPoint, context: CGContext) {
         let loadBundle = bundle ?? Bundle.main
         if let pdfImagePath = loadBundle.path(forResource: path, ofType: "pdf") {
             let pdfImageURL = URL(fileURLWithPath: pdfImagePath)
-            if let pdfImageDocument = CGPDFDocument(pdfImageURL),
+            if let pdfImageDocument = CGPDFDocument(pdfImageURL as CFURL),
                 let pdfImagePage = pdfImageDocument.page(at: 1) {
                 
                 let imageRect = pdfImagePage.getBoxRect(.mediaBox)
@@ -95,7 +95,7 @@ extension CALayer {
     fileprivate func debugLog() -> Self {
         print("---")
         print("Layer draw info")
-        debugPrint(self.dynamicType, "delegate:", delegate)
+        debugPrint(type(of: self), "delegate:", delegate)
         if let ctx = UIGraphicsGetCurrentContext() {
             print("frame:", frame, "bounds: ", bounds, "clip box:", ctx.boundingBoxOfClipPath)
             print("background color:", backgroundColor)

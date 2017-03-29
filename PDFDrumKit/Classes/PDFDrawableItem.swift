@@ -24,7 +24,7 @@ public protocol PDFDrawableItem: NSObjectProtocol {
 
 extension PDFDrawableItem {
     
-    public func addLinkInRect(_ URL: Foundation.URL, linkRect: CGRect, context: CGContextRef) {
+    public func addLinkInRect(_ URL: Foundation.URL, linkRect: CGRect, context: CGContext) {
         let ctm = context.ctm
         let normalizedRect = linkRect.applying(ctm)
         UIGraphicsSetPDFContextURLForRect(URL, normalizedRect)
@@ -36,11 +36,11 @@ extension PDFDrawableItem {
          CGContextRestoreGState(context)*/
     }
     
-    public func setDestinationAtPoint(_ destination: String, point: CGPoint, context: CGContextRef) {
+    public func setDestinationAtPoint(_ destination: String, point: CGPoint, context: CGContext) {
         UIGraphicsAddPDFContextDestinationAtPoint(destination, point)
     }
     
-    public func addDestinationLinkInRect(_ destination: String, linkRect: CGRect, context: CGContextRef) {
+    public func addDestinationLinkInRect(_ destination: String, linkRect: CGRect, context: CGContext) {
         let ctm = context.ctm
         let normalizedRect = linkRect.applying(ctm)
         UIGraphicsSetPDFContextDestinationForRect(destination, linkRect)

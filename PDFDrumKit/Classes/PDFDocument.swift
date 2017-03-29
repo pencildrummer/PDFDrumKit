@@ -29,8 +29,8 @@ open class PDFDocument {
         
     }
     
-    open var pdfMetadata: [String: AnyObject] {
-        var metadata: [String: AnyObject] = [
+    open var pdfMetadata: [String: Any] {
+        var metadata: [String: Any] = [
             kCGPDFContextCreator as String : "\(kPDFDrumKitDisplayName) v.\(kPDFDrumKitVersion) - \(kPDFDrumKitInfo)"
         ]
         if let title = title {
@@ -59,7 +59,7 @@ open class PDFDocument {
         if let filename = filename {
             _filename = filename
         } else {
-            _filename = String("PDFBuilder_\(ProcessInfo.processInfo().globallyUniqueString).pdf")
+            _filename = String("PDFBuilder_\(ProcessInfo.processInfo.globallyUniqueString).pdf")
         }
         
         // Sanitize the pdf filename
