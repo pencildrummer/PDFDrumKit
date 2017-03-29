@@ -9,34 +9,34 @@
 import Foundation
 import UIKit
 
-public class PDFDocument {
+open class PDFDocument {
     
-    public var title: String?
-    private var _filename: String!
-    public var filename: String?
-    public var author: String?
+    open var title: String?
+    fileprivate var _filename: String!
+    open var filename: String?
+    open var author: String?
     
-    public var pagesHeader: PDFHeader?
-    public var pagesFooter: PDFFooter?
+    open var pagesHeader: PDFHeader?
+    open var pagesFooter: PDFFooter?
     
-    public var defaultPageSize: PDFPageSize?
-    public var defaultPageMargins: UIEdgeInsets?
+    open var defaultPageSize: PDFPageSize?
+    open var defaultPageMargins: UIEdgeInsets?
     
-    public private(set) var pdfPath: String?
-    public private(set) var pages: [PDFPage] = []
+    open fileprivate(set) var pdfPath: String?
+    open fileprivate(set) var pages: [PDFPage] = []
     
     public init() {
         
     }
     
-    public var pdfMetadata: [String: AnyObject] {
+    open var pdfMetadata: [String: AnyObject] {
         var metadata: [String: AnyObject] = [
             kCGPDFContextCreator as String : "\(kPDFDrumKitDisplayName) v.\(kPDFDrumKitVersion) - \(kPDFDrumKitInfo)"
         ]
         if let title = title {
             metadata[kCGPDFContextTitle as String] = title
         } else if let _filename = _filename {
-            metadata[kCGPDFContextTitle as String] = NSString(string: _filename).stringByDeletingPathExtension
+            metadata[kCGPDFContextTitle as String] = NSString(string: _filename).deletingPathExtension
         }
         if let author = author {
             metadata[kCGPDFContextAuthor as String] = author
@@ -44,7 +44,7 @@ public class PDFDocument {
         return metadata
     }
     
-    public func addPage(page: PDFPage) {
+    open func addPage(_ page: PDFPage) {
         if page.pageSize == nil {
             page.pageSize = defaultPageSize
         }
@@ -54,27 +54,27 @@ public class PDFDocument {
         pages.append(page)
     }
     
-    public func generate() {
+    open func generate() {
         
         if let filename = filename {
             _filename = filename
         } else {
-            _filename = String("PDFBuilder_\(NSProcessInfo.processInfo().globallyUniqueString).pdf")
+            _filename = String("PDFBuilder_\(ProcessInfo.processInfo().globallyUniqueString).pdf")
         }
         
         // Sanitize the pdf filename
         
         _filename = _filename.sanitizedPDFFilenameString
         
-        let tmpPath = NSString(string: NSTemporaryDirectory()).stringByAppendingPathComponent(_filename) as! String
+        let tmpPath = NSString(string: NSTemporaryDirectory()).appendingPathComponent(_filename) as! String
         
         pdfPath = tmpPath
         
         // Define PDF context
         
-        var pagesSize = CGRectZero
+        var pagesSize = CGRect.zero
         if let defaultPageSize = defaultPageSize {
-            pagesSize = CGRect(origin: CGPointZero,
+            pagesSize = CGRect(origin: CGPoint.zero,
                                size: defaultPageSize.size)
         }
         

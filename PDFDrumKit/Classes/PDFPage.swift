@@ -9,21 +9,21 @@
 import Foundation
 import UIKit
 
-public class PDFPage {
+open class PDFPage {
     
-    public var pageSize: PDFPageSize?
-    public var margins: UIEdgeInsets?
+    open var pageSize: PDFPageSize?
+    open var margins: UIEdgeInsets?
     
-    public var pageHeader: PDFHeader?
-    public var pageFooter: PDFFooter?
+    open var pageHeader: PDFHeader?
+    open var pageFooter: PDFFooter?
     
-    public private(set) var items: [PDFDrawableItem] = []
+    open fileprivate(set) var items: [PDFDrawableItem] = []
     
     public init() {
         
     }
     
-    public func addItem(pdfItem: PDFDrawableItem) {
+    open func addItem(_ pdfItem: PDFDrawableItem) {
         items.append(pdfItem)
     }
     
@@ -31,31 +31,31 @@ public class PDFPage {
     
     internal var pageDrawableRect: CGRect {
         if let pageSize = pageSize {
-            let pageRect = CGRect(origin: CGPointZero, size: pageSize.size)
-            return UIEdgeInsetsInsetRect(pageRect, margins ?? UIEdgeInsetsZero)
+            let pageRect = CGRect(origin: CGPoint.zero, size: pageSize.size)
+            return UIEdgeInsetsInsetRect(pageRect, margins ?? UIEdgeInsets.zero)
         }
-        return CGRectZero
+        return CGRect.zero
     }
     
     internal var pageContentDrawableRect: CGRect {
         var pageContentDrawableRect = pageDrawableRect
         if let pageHeader = pageHeader {
-            pageContentDrawableRect.origin.y += CGRectGetHeight(pageHeader.drawBounds)
-            pageContentDrawableRect.size.height -= CGRectGetHeight(pageHeader.drawBounds)
+            pageContentDrawableRect.origin.y += pageHeader.drawBounds.height
+            pageContentDrawableRect.size.height -= pageHeader.drawBounds.height
         }
         if let pageFooter = pageFooter {
-            pageContentDrawableRect.size.height -= CGRectGetHeight(pageFooter.drawBounds)
+            pageContentDrawableRect.size.height -= pageFooter.drawBounds.height
         }
         return pageContentDrawableRect
     }
     
-    private func calculateFrameForItems() {
+    fileprivate func calculateFrameForItems() {
         let contentRect = pageContentDrawableRect
         var lastOrigin = contentRect.origin
         items = items.map { item in
             
             var availableSize = UILayoutFittingCompressedSize
-            availableSize.width = CGRectGetWidth(contentRect) - item.layoutMargins.left - item.layoutMargins.right
+            availableSize.width = contentRect.width - item.layoutMargins.left - item.layoutMargins.right
             
             let size = item.systemLayoutSizeFittingSize(availableSize, withHorizontalFittingPriority: UILayoutPriorityRequired, verticalFittingPriority: UILayoutPriorityDefaultLow)
             
@@ -65,13 +65,13 @@ public class PDFPage {
             
             item.frame = drawableItemRect
             
-            lastOrigin.y = lastOrigin.y + CGRectGetHeight(item.drawBounds) + item.layoutMargins.top + item.layoutMargins.bottom
+            lastOrigin.y = lastOrigin.y + item.drawBounds.height + item.layoutMargins.top + item.layoutMargins.bottom
             
             return item
         }
     }
     
-    private func normalizedBoundsForItem(item: PDFItem) -> CGRect {
+    fileprivate func normalizedBoundsForItem(_ item: PDFItem) -> CGRect {
         let pageRect = pageDrawableRect
         var bounds = item.drawBounds
         if bounds.size.width == 0 {
@@ -115,7 +115,7 @@ public class PDFPage {
             // Set the drawRect on the item
             let itemBounds = normalizedBoundsForItem(pageFooter)
             let pageContentDrawableRect = self.pageContentDrawableRect
-            pageFooter.frame = CGRect(origin: CGPoint(x: pageContentDrawableRect.origin.x, y: CGRectGetMaxY(pageContentDrawableRect))
+            pageFooter.frame = CGRect(origin: CGPoint(x: pageContentDrawableRect.origin.x, y: pageContentDrawableRect.maxY)
                 , size: itemBounds.size)
             // Performs the drawing
             pageFooter.draw()

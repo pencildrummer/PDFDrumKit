@@ -11,25 +11,25 @@ import UIKit
 
 class PDFURLLabel: UILabel, PDFDrawableItem {
     
-    @IBInspectable public var urlStringOrDestinationName: String?
+    @IBInspectable open var urlStringOrDestinationName: String?
     
-    public var drawBounds: CGRect {
+    open var drawBounds: CGRect {
         setNeedsLayout()
         layoutIfNeeded()
         return bounds
     }
     
-    final override func drawRect(rect: CGRect) {
-        super.drawRect(rect)
+    final override func draw(_ rect: CGRect) {
+        super.draw(rect)
     }
     
-    override func drawLayer(layer: CALayer, inContext ctx: CGContext) {
-        super.drawLayer(layer, inContext: ctx)
+    override func draw(_ layer: CALayer, in ctx: CGContext) {
+        super.draw(layer, in: ctx)
         
         let rect = layer.frame
         
         if let urlStringOrDestinationName = urlStringOrDestinationName {
-            if let url = NSURL(string: urlStringOrDestinationName) {
+            if let url = URL(string: urlStringOrDestinationName) {
                 addLinkInRect(url, linkRect: layer.bounds, context: ctx)
             } else {
                 addDestinationLinkInRect(urlStringOrDestinationName, linkRect: layer.bounds, context: ctx)

@@ -8,9 +8,9 @@
 
 import Foundation
 
-public class PDFHeader: PDFItem {
+open class PDFHeader: PDFItem {
     
-    public override var drawBounds: CGRect {
+    open override var drawBounds: CGRect {
         return CGRect(x: 0, y: 0, width: 0, height: 30)
     }
     

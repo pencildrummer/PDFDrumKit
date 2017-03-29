@@ -19,14 +19,14 @@ public protocol PDFDrawableItem: NSObjectProtocol {
     var drawBounds: CGRect { get }
     
     @available(iOS 8.0, *)
-    func systemLayoutSizeFittingSize(targetSize: CGSize, withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority, verticalFittingPriority: UILayoutPriority) -> CGSize
+    func systemLayoutSizeFittingSize(_ targetSize: CGSize, withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority, verticalFittingPriority: UILayoutPriority) -> CGSize
 }
 
 extension PDFDrawableItem {
     
-    public func addLinkInRect(URL: NSURL, linkRect: CGRect, context: CGContextRef) {
-        let ctm = CGContextGetCTM(context)
-        let normalizedRect = CGRectApplyAffineTransform(linkRect, ctm)
+    public func addLinkInRect(_ URL: Foundation.URL, linkRect: CGRect, context: CGContextRef) {
+        let ctm = context.ctm
+        let normalizedRect = linkRect.applying(ctm)
         UIGraphicsSetPDFContextURLForRect(URL, normalizedRect)
         
         // DEBUG
@@ -36,13 +36,13 @@ extension PDFDrawableItem {
          CGContextRestoreGState(context)*/
     }
     
-    public func setDestinationAtPoint(destination: String, point: CGPoint, context: CGContextRef) {
+    public func setDestinationAtPoint(_ destination: String, point: CGPoint, context: CGContextRef) {
         UIGraphicsAddPDFContextDestinationAtPoint(destination, point)
     }
     
-    public func addDestinationLinkInRect(destination: String, linkRect: CGRect, context: CGContextRef) {
-        let ctm = CGContextGetCTM(context)
-        let normalizedRect = CGRectApplyAffineTransform(linkRect, ctm)
+    public func addDestinationLinkInRect(_ destination: String, linkRect: CGRect, context: CGContextRef) {
+        let ctm = context.ctm
+        let normalizedRect = linkRect.applying(ctm)
         UIGraphicsSetPDFContextDestinationForRect(destination, linkRect)
     }
     
@@ -52,14 +52,14 @@ extension PDFDrawableItem {
         
         if let context = UIGraphicsGetCurrentContext() {
             
-            CGContextSaveGState(context)
+            context.saveGState()
             
-            CGContextTranslateCTM(context, frame.origin.x, frame.origin.y)
-            CGContextClipToRect(context, bounds)
+            context.translateBy(x: frame.origin.x, y: frame.origin.y)
+            context.clip(to: bounds)
             
-            layer.drawInContext(context)
+            layer.draw(in: context)
             
-            CGContextRestoreGState(context)
+            context.restoreGState()
             
         }
         
