@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PDFDrumKit'
-  s.version          = '0.2.2'
+  s.version          = '0.3.0'
   s.summary          = 'A short description of PDFDrumKit.'
 
   s.homepage         = 'https://github.com/pencildrummer/PDFDrumKit'
