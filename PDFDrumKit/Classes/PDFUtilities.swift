@@ -25,7 +25,7 @@ extension String {
     internal var sanitizedPDFFilenameString: String {
         var sanitized = self
         // Check for illegal characters
-        sanitized = sanitized.stringByReplacingOccurrencesOfString("/", withString: "-")
+        sanitized = sanitized.replacingOccurrences(of: "/", with: "-")
         // Escape spaces in filename
         //sanitized = sanitized.stringByReplacingOccurrencesOfString(" ", withString: "_")
         // Check if has pdf extension

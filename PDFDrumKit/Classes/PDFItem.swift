@@ -9,54 +9,54 @@
 
 import Foundation
 
-public class PDFItem: UIView, PDFDrawableItem {
+open class PDFItem: UIView, PDFDrawableItem {
     
     internal var _page: PDFPage?
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
-        layoutMargins = UIEdgeInsetsZero
+        layoutMargins = UIEdgeInsets.zero
     }
     
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        layoutMargins = UIEdgeInsetsZero
+        layoutMargins = UIEdgeInsets.zero
     }
     
-    public var drawBounds: CGRect {
+    open var drawBounds: CGRect {
         setNeedsLayout()
         layoutIfNeeded()
         return bounds
     }
     
-    public override func drawLayer(layer: CALayer, inContext ctx: CGContext) {
-        super.drawLayer(layer, inContext: ctx)
+    open override func draw(_ layer: CALayer, in ctx: CGContext) {
+        super.draw(layer, in: ctx)
         drawLayerHierarchy(layer, ctx: ctx)
     }
     
-    private func drawLayerHierarchy(layer: CALayer, ctx: CGContextRef) {
+    fileprivate func drawLayerHierarchy(_ layer: CALayer, ctx: CGContext) {
         if let sublayers = layer.sublayers {
             for sublayer in sublayers {
-                CGContextSaveGState(ctx)
+                ctx.saveGState()
 
-                CGContextTranslateCTM(ctx, sublayer.frame.origin.x, sublayer.frame.origin.y)
-                CGContextClipToRect(ctx, sublayer.bounds)
+                ctx.translateBy(x: sublayer.frame.origin.x, y: sublayer.frame.origin.y)
+                ctx.clip(to: sublayer.bounds)
                 
                 sublayer.allowsEdgeAntialiasing = false
 
-                sublayer.drawInContext(ctx)
+                sublayer.draw(in: ctx)
                 
                 var shouldRender = sublayer.sublayers?.count ?? 0 == 0
                 if let _ = sublayer.delegate as? UILabel {
                     shouldRender = false
                 }
                 if shouldRender {
-                    sublayer.renderInContext(ctx)
+                    sublayer.render(in: ctx)
                 }
                 
                 drawLayerHierarchy(sublayer, ctx: ctx)
                 
-                CGContextRestoreGState(ctx)
+                ctx.restoreGState()
             }
         }
     }
@@ -64,25 +64,25 @@ public class PDFItem: UIView, PDFDrawableItem {
     // -drawRect has been marked final to avoid override
     // The draw code must be perfomed inside the -drawLayer(layer:, inContext:)
     
-    final public override func drawRect(rect: CGRect) {
-        super.drawRect(rect)
+    final public override func draw(_ rect: CGRect) {
+        super.draw(rect)
     }
     
-    public func drawVectorImage(path: String, inBundle bundle: NSBundle? = nil, atPoint point: CGPoint, context: CGContextRef) {
-        let loadBundle = bundle ?? NSBundle.mainBundle()
-        if let pdfImagePath = loadBundle.pathForResource(path, ofType: "pdf") {
-            let pdfImageURL = NSURL(fileURLWithPath: pdfImagePath)
-            if let pdfImageDocument = CGPDFDocumentCreateWithURL(pdfImageURL),
-                let pdfImagePage = CGPDFDocumentGetPage(pdfImageDocument, 1) {
+    open func drawVectorImage(_ path: String, inBundle bundle: Bundle? = nil, atPoint point: CGPoint, context: CGContext) {
+        let loadBundle = bundle ?? Bundle.main
+        if let pdfImagePath = loadBundle.path(forResource: path, ofType: "pdf") {
+            let pdfImageURL = URL(fileURLWithPath: pdfImagePath)
+            if let pdfImageDocument = CGPDFDocument(pdfImageURL as CFURL),
+                let pdfImagePage = pdfImageDocument.page(at: 1) {
                 
-                let imageRect = CGPDFPageGetBoxRect(pdfImagePage, .MediaBox)
+                let imageRect = pdfImagePage.getBoxRect(.mediaBox)
                 
-                CGContextSaveGState(context)
-                CGContextTranslateCTM(context, 0, imageRect.size.height)
-                CGContextTranslateCTM(context, point.x, point.y)
-                CGContextScaleCTM(context, 1, -1)
-                CGContextDrawPDFPage(context, pdfImagePage)
-                CGContextRestoreGState(context)
+                context.saveGState()
+                context.translateBy(x: 0, y: imageRect.size.height)
+                context.translateBy(x: point.x, y: point.y)
+                context.scaleBy(x: 1, y: -1)
+                context.drawPDFPage(pdfImagePage)
+                context.restoreGState()
                 
             }
         }
@@ -92,12 +92,12 @@ public class PDFItem: UIView, PDFDrawableItem {
 
 extension CALayer {
     
-    private func debugLog() -> Self {
+    fileprivate func debugLog() -> Self {
         print("---")
         print("Layer draw info")
-        debugPrint(self.dynamicType, "delegate:", delegate)
+        debugPrint(type(of: self), "delegate:", delegate)
         if let ctx = UIGraphicsGetCurrentContext() {
-            print("frame:", frame, "bounds: ", bounds, "clip box:", CGContextGetClipBoundingBox(ctx))
+            print("frame:", frame, "bounds: ", bounds, "clip box:", ctx.boundingBoxOfClipPath)
             print("background color:", backgroundColor)
         }
         return self
