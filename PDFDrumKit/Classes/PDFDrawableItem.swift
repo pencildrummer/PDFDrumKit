@@ -18,6 +18,8 @@ public protocol PDFDrawableItem: NSObjectProtocol {
     
     var drawBounds: CGRect { get }
     
+    var clipsToBounds: Bool { get set }
+    
     @available(iOS 8.0, *)
     func systemLayoutSizeFittingSize(_ targetSize: CGSize, withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority, verticalFittingPriority: UILayoutPriority) -> CGSize
 }
@@ -55,7 +57,9 @@ extension PDFDrawableItem {
             context.saveGState()
             
             context.translateBy(x: frame.origin.x, y: frame.origin.y)
-            context.clip(to: bounds)
+            if clipsToBounds {
+                context.clip(to: bounds)
+            }
             
             layer.draw(in: context)
             
