@@ -26,7 +26,7 @@ class PDFURLLabel: UILabel, PDFDrawableItem {
     override func draw(_ layer: CALayer, in ctx: CGContext) {
         super.draw(layer, in: ctx)
         
-        let rect = layer.frame
+        //let rect = layer.frame
         
         if let urlStringOrDestinationName = urlStringOrDestinationName {
             if let url = URL(string: urlStringOrDestinationName) {

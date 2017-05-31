@@ -38,7 +38,6 @@ public enum PDFPageSize {
         case .a6:
             return CGSize(width: 298, height: 420)
         }
-        return CGSize.zero
     }
     
     var bounds: CGRect {

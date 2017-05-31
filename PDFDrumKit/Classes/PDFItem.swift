@@ -95,10 +95,10 @@ extension CALayer {
     fileprivate func debugLog() -> Self {
         print("---")
         print("Layer draw info")
-        debugPrint(type(of: self), "delegate:", delegate)
+        debugPrint(type(of: self), "delegate:", delegate as Any)
         if let ctx = UIGraphicsGetCurrentContext() {
             print("frame:", frame, "bounds: ", bounds, "clip box:", ctx.boundingBoxOfClipPath)
-            print("background color:", backgroundColor)
+            print("background color:", backgroundColor as Any)
         }
         return self
     }

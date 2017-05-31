@@ -66,7 +66,7 @@ open class PDFDocument {
         
         _filename = _filename.sanitizedPDFFilenameString
         
-        let tmpPath = NSString(string: NSTemporaryDirectory()).appendingPathComponent(_filename) as! String
+        let tmpPath = NSString(string: NSTemporaryDirectory()).appendingPathComponent(_filename)
         
         pdfPath = tmpPath
         

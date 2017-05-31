@@ -43,8 +43,8 @@ extension PDFDrawableItem {
     }
     
     public func addDestinationLinkInRect(_ destination: String, linkRect: CGRect, context: CGContext) {
-        let ctm = context.ctm
-        let normalizedRect = linkRect.applying(ctm)
+        //let ctm = context.ctm
+        //let normalizedRect = linkRect.applying(ctm)
         UIGraphicsSetPDFContextDestinationForRect(destination, linkRect)
     }
     
