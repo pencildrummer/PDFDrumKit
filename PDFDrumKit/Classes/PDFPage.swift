@@ -84,11 +84,10 @@ open class PDFPage {
     
     // MARK: Draw
     
-    internal func draw() {
+    internal func draw() throws {
         
         guard let pageSize = pageSize else {
-            // TODO - Throw exception to set defaultPageSize on document or pageSize on page
-            return
+            throw PDFError.invalidPageSize
         }
         
         UIGraphicsBeginPDFPageWithInfo(pageSize.bounds, nil)

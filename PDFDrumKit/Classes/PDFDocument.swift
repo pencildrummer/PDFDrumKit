@@ -89,7 +89,13 @@ open class PDFDocument {
             if page.pageFooter == nil {
                 page.pageFooter = pagesFooter
             }
-            page.draw()
+            do {
+                try page.draw()
+            } catch let error as PDFError {
+                print(error.localizedDescription)
+            } catch {
+                print("Unknown error")
+            }
         }
         
         UIGraphicsEndPDFContext()

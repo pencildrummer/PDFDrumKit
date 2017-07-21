@@ -30,12 +30,6 @@ extension PDFDrawableItem {
         let ctm = context.ctm
         let normalizedRect = linkRect.applying(ctm)
         UIGraphicsSetPDFContextURLForRect(URL, normalizedRect)
-        
-        // DEBUG
-        /*CGContextSaveGState(context)
-         UIColor.purpleColor().colorWithAlphaComponent(0.5).setFill()
-         CGContextFillRect(context, linkRect)
-         CGContextRestoreGState(context)*/
     }
     
     public func setDestinationAtPoint(_ destination: String, point: CGPoint, context: CGContext) {
@@ -43,8 +37,6 @@ extension PDFDrawableItem {
     }
     
     public func addDestinationLinkInRect(_ destination: String, linkRect: CGRect, context: CGContext) {
-        //let ctm = context.ctm
-        //let normalizedRect = linkRect.applying(ctm)
         UIGraphicsSetPDFContextDestinationForRect(destination, linkRect)
     }
     
