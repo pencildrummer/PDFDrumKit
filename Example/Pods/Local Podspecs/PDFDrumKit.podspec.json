@@ -1,6 +1,6 @@
 {
   "name": "PDFDrumKit",
-  "version": "0.3.1",
+  "version": "0.3.3",
   "summary": "A short description of PDFDrumKit.",
   "homepage": "https://github.com/pencildrummer/PDFDrumKit",
   "license": {
@@ -12,7 +12,7 @@
   },
   "source": {
     "git": "https://github.com/pencildrummer/PDFDrumKit.git",
-    "tag": "0.3.1"
+    "tag": "0.3.3"
   },
   "platforms": {
     "ios": "8.0"

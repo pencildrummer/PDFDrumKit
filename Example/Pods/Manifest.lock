@@ -1,5 +1,5 @@
 PODS:
-  - PDFDrumKit (0.3.1)
+  - PDFDrumKit (0.3.3)
 
 DEPENDENCIES:
   - PDFDrumKit (from `../`)
@@ -9,8 +9,8 @@ EXTERNAL SOURCES:
     :path: ../
 
 SPEC CHECKSUMS:
-  PDFDrumKit: 2217e836ad9fc6acdc06dfc0fddacfdba1f50d2d
+  PDFDrumKit: c783a7088c8d00df5a0df72f768484b0bae6e5f5
 
 PODFILE CHECKSUM: 3e84cea88074c0d9c4baec73c3edfd3e2e3c7fd2
 
-COCOAPODS: 1.2.0
+COCOAPODS: 1.3.1
