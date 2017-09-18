@@ -21,7 +21,8 @@ public protocol PDFDrawableItem: NSObjectProtocol {
     var clipsToBounds: Bool { get set }
     
     @available(iOS 8.0, *)
-    func systemLayoutSizeFittingSize(_ targetSize: CGSize, withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority, verticalFittingPriority: UILayoutPriority) -> CGSize
+    func systemLayoutSizeFitting(_ targetSize: CGSize, withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority, verticalFittingPriority: UILayoutPriority) -> CGSize
+    
 }
 
 extension PDFDrawableItem {

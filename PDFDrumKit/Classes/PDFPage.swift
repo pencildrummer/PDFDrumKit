@@ -57,7 +57,7 @@ open class PDFPage {
             var availableSize = UILayoutFittingCompressedSize
             availableSize.width = contentRect.width - item.layoutMargins.left - item.layoutMargins.right
             
-            let size = item.systemLayoutSizeFittingSize(availableSize, withHorizontalFittingPriority: UILayoutPriorityRequired, verticalFittingPriority: UILayoutPriorityDefaultLow)
+            let size = item.systemLayoutSizeFitting(availableSize, withHorizontalFittingPriority: UILayoutPriority.required, verticalFittingPriority: UILayoutPriority.defaultLow)
             
             var drawableItemRect = CGRect(origin: lastOrigin, size: size)
             
