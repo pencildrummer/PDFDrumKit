@@ -54,7 +54,7 @@ open class PDFDocument {
         pages.append(page)
     }
     
-    open func generate() {
+    open func generate(inDirectory: String? = nil) {
         
         if let filename = filename {
             _filename = filename
@@ -66,9 +66,18 @@ open class PDFDocument {
         
         _filename = _filename.sanitizedPDFFilenameString
         
-        let tmpPath = NSString(string: NSTemporaryDirectory()).appendingPathComponent(_filename)
+        // Define storage path
         
-        pdfPath = tmpPath
+        var storageDirectory: String
+        if let inDirectory = inDirectory {
+            storageDirectory = inDirectory
+        } else {
+            storageDirectory = NSTemporaryDirectory()
+        }
+        
+        let storagePath = NSString(string: storageDirectory).appendingPathComponent(_filename)
+        
+        pdfPath = storagePath
         
         // Define PDF context
         
@@ -78,7 +87,7 @@ open class PDFDocument {
                                size: defaultPageSize.size)
         }
         
-        UIGraphicsBeginPDFContextToFile(tmpPath, pagesSize, pdfMetadata)
+        UIGraphicsBeginPDFContextToFile(storagePath, pagesSize, pdfMetadata)
         
         // Perform draw pages
         
