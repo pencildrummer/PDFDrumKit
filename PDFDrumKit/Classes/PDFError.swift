@@ -16,8 +16,6 @@ enum PDFError: Error {
         switch self {
         case .invalidPageSize:
             return "Invalid page size. Set a defaultPageSize on document or a pageSize on page."
-        default:
-            return "Unknown PDFError"
         }
     }
     
