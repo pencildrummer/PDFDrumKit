@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PDFDrumKit'
-  s.version          = '0.4.0'
+  s.version          = '0.5.0'
   s.summary          = 'A short description of PDFDrumKit.'
 
   s.homepage         = 'https://github.com/pencildrummer/PDFDrumKit'
@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   s.author           = { 'Fabio Borella' => 'info@pencildrummer.com' }
   s.source           = { :git => 'https://github.com/pencildrummer/PDFDrumKit.git', :tag => s.version.to_s }
 
-  s.ios.deployment_target = '8.0'
+  s.ios.deployment_target = '9.0'
 
   s.source_files = 'PDFDrumKit/Classes/**/*'
 
